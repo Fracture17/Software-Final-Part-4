@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class HumanPlayer implements Player {
+    HumanPlayer(Piece.color color) {
+        this.color = color;
+    }
 
     @Override
     public Move getNextMove(Board board, Display display) {
@@ -18,6 +21,11 @@ public class HumanPlayer implements Player {
         return new Move(source.getRow(), source.getCol(), dest.getRow(), dest.getCol());
     }
 
+    @Override
+    public Piece.color getColor() {
+        return color;
+    }
+
     private ArrayList<Move> getValidMoves(Board board, int r, int c) {
         ArrayList<Move> potentialMoves = PieceMoves.getPotentialMoves(board, r, c);
         ArrayList<Move> validMoves = new ArrayList<>();
@@ -29,4 +37,8 @@ public class HumanPlayer implements Player {
 
         return validMoves;
     }
+
+
+
+    private Piece.color color;
 }
