@@ -62,8 +62,8 @@ public class Grid {
     }
 
 
-    public static final int HEIGHT = 8;
-    public static final int WIDTH = 8;
+    public final int HEIGHT = 8;
+    public final int WIDTH = 8;
 
     private Square[][] squares = new Square[HEIGHT][WIDTH];
 }
