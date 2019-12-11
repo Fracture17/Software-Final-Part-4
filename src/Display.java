@@ -3,37 +3,12 @@ public class Display {
         for(int r = 0; r < board.getHeight(); r++) {
             for(int c = 0; c < board.getWidth(); c++) {
                 Piece piece = board.getPiece(r, c);
-                if(piece == null) {
-                    System.out.print("X\t");
-                    continue;
-                }
 
-                if(piece.getColor() == Piece.color.BLACK) {
-                    System.out.print("B_");
+                if(piece == null) {
+                    displayEmpty();
                 }
                 else {
-                    System.out.print("W_");
-                }
-
-                switch (piece.getType()) {
-                    case PAWN:
-                        System.out.print("pawn");
-                        break;
-                    case KING:
-                        System.out.print("king");
-                        break;
-                    case QUEEN:
-                        System.out.print("queen");
-                        break;
-                    case BISHOP:
-                        System.out.print("bishop");
-                        break;
-                    case ROOK:
-                        System.out.print("rook");
-                        break;
-                    case KNIGHT:
-                        System.out.print("knight");
-                        break;
+                    displayPiece(piece);
                 }
 
                 System.out.print("\t");
@@ -42,4 +17,71 @@ public class Display {
             System.out.println();
         }
     }
+
+    private void displayPiece(Piece piece) {
+        displayColor(piece.getColor());
+        displayType(piece.getType());
+    }
+
+    private void displayColor(Piece.color color) {
+        if(color == Piece.color.BLACK) {
+            System.out.print("B_");
+        }
+        else {
+            System.out.print("W_");
+        }
+    }
+
+    private void displayType(Piece.type type) {
+        switch (type) {
+            case PAWN:
+                displayPawn();
+                break;
+            case KING:
+                displayKing();
+                break;
+            case QUEEN:
+                displayQueen();
+                break;
+            case BISHOP:
+                displayBishop();
+                break;
+            case ROOK:
+                displayRook();
+                break;
+            case KNIGHT:
+                displayKnight();
+                break;
+        }
+    }
+
+    private void displayPawn() {
+        System.out.print("pawn");
+    }
+
+    private void displayKing() {
+        System.out.print("king");
+    }
+
+    private void displayQueen() {
+        System.out.print("queen");
+    }
+
+    private void displayBishop() {
+        System.out.print("bishop");
+    }
+
+    private void displayRook() {
+        System.out.print("rook");
+    }
+
+    private void displayKnight() {
+        System.out.print("knight");
+    }
+
+    private void displayEmpty() {
+        System.out.print("X");
+    }
+
+
 }
