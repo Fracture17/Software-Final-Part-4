@@ -3,7 +3,9 @@ public abstract class Piece {
         this.playerColor = playerColor;
     }
 
-    public abstract color getColor();
+    public color getColor() {
+        return playerColor;
+    }
 
     public abstract type getType();
 
