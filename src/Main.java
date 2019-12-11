@@ -6,7 +6,7 @@ public class Main {
 
         Board board = new Board();
 
-        Display display = new Display();
+        Display display = new CommandLineDisplay();
 
         display.update(board);
     }

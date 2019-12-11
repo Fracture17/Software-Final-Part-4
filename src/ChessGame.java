@@ -35,5 +35,5 @@ public class ChessGame {
     Board board = new Board();
     private Player a;
     private Player b;
-    private Display display = new Display();
+    private Display display = new CommandLineDisplay();
 }
