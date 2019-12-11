@@ -18,12 +18,15 @@ public class Grid {
 
 
 
+
+
+
+
         for(int r = 2; r < HEIGHT - 1 - 1; r++) {
             for(c = 0; c < WIDTH; c++) {
                 squares[r][c] = new Square();
             }
         }
-
 
 
         for(c = 0; c < WIDTH; c++) {
@@ -43,10 +46,10 @@ public class Grid {
         squares[HEIGHT - 1][c] = new Square(new Rook(x)); c++;
     }
 
-    public void movePiece(int sourceRow, int sourceCol, int destRow, int destCol) {
+    public void movePiece(Move move) {
         //Any piece in the dest square is considered taken and removed
-        setSquare(destRow, destCol, getPiece(sourceRow, sourceCol));
-        setSquare(sourceRow, sourceCol, null);
+        setSquare(move.destRow, move.destCol, getPiece(move.sourceRow, move.sourceCol));
+        setSquare(move.sourceRow, move.sourceCol, null);
     }
 
     private void setSquare(int r, int c, Piece piece) {
@@ -54,10 +57,20 @@ public class Grid {
     }
 
     public Piece getPiece(int r, int c) {
-        return getSquare(r, c).getPiece();
+        Square square = getSquare(r, c);
+        if(square == null) {
+            return null;
+        }
+        return square.getPiece();
     }
 
-    private Square getSquare(int r, int c) {
+    public Square getSquare(int r, int c) {
+        if(r < 0 || r >= HEIGHT) {
+            return null;
+        }
+        if(c < 0 || c >= WIDTH) {
+            return null;
+        }
         return squares[r][c];
     }
 

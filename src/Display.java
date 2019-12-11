@@ -83,5 +83,13 @@ public class Display {
         System.out.print("X");
     }
 
+    public void displayMove(Move move) {
+        char sourceRowChar = (char) (move.sourceRow + 'a');
+        char sourceColChar = (char) (move.sourceCol + '1');
 
+        char destRowChar = (char) (move.destRow + 'a');
+        char destColChar = (char) (move.destCol + '1');
+
+        System.out.print("" + sourceRowChar + sourceColChar + "->" + destRowChar + destColChar);
+    }
 }

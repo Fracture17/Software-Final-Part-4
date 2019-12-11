@@ -6,6 +6,12 @@ public class Move {
         this.destCol = destCol;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        Move other = (Move) obj;
+        return sourceRow == other.sourceRow && sourceCol == other.sourceCol && destRow == other.destRow && destCol == other.destCol;
+    }
+
     public int sourceRow;
     public int sourceCol;
     public int destRow;
