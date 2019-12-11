@@ -1,5 +1,7 @@
+import Pieces.Piece;
+
 public interface Player {
-    public Move getNextMove(Board board, Display display);
+    Move getNextMove(Board board, Display display);
 
-
+    Piece.color getColor();
 }
