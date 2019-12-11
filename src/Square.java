@@ -3,5 +3,9 @@ public class Square {
         this.piece = piece;
     }
 
+    public Square() {
+        this.piece = null;
+    }
+
     private Piece piece;
 }
