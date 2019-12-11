@@ -1,3 +1,5 @@
+import Pieces.Piece;
+
 public class Display {
     public void update(Board board) {
         for(int r = 0; r < board.getHeight(); r++) {

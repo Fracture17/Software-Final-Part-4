@@ -1,3 +1,5 @@
+import Pieces.Piece;
+
 public class Board {
     public Piece getPiece(int r, int c) {
         return grid.getPiece(r, c);

@@ -1,3 +1,5 @@
+package Pieces;
+
 public class Rook extends Piece {
     public Rook(color playerColor) {
         super(playerColor);

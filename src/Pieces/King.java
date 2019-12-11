@@ -1,3 +1,5 @@
+package Pieces;
+
 public class King extends Piece {
     public King(color playerColor) {
         super(playerColor);

@@ -1,3 +1,5 @@
+import Pieces.*;
+
 public class Grid {
     public Grid() {
         Piece.color x = Piece.color.BLACK;

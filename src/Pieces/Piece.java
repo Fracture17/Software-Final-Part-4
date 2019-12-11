@@ -1,3 +1,5 @@
+package Pieces;
+
 public abstract class Piece {
     public Piece(color playerColor) {
         this.playerColor = playerColor;
@@ -9,12 +11,12 @@ public abstract class Piece {
 
     public abstract type getType();
 
-    enum color {
+    public enum color {
         WHITE,
         BLACK
     }
 
-    enum type {
+    public enum type {
         PAWN,
         ROOK,
         QUEEN,
