@@ -1,3 +1,5 @@
+import Pieces.Piece;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,28 +7,15 @@ public class HumanPlayer implements Player {
 
     @Override
     public Move getNextMove(Board board, Display display) {
-        Scanner scanner = new Scanner(System.in);
+        display.askForPieceToMove(board, Piece.color.WHITE);
+        Position source = display.getSourcePiecePosition(board, Piece.color.WHITE);
 
-        System.out.println("Enter source pos: ");
-        String sourcePos = scanner.nextLine();
+        ArrayList<Move> validMoves = PieceMoves.getValidMoves(board, source.getRow(), source.getCol());
 
-        int sourceRow = sourcePos.charAt(0) - 'a';
-        int sourceCol = sourcePos.charAt(1) - '1';
+        display.askWhereToMove(board, Piece.color.WHITE, validMoves);
+        Position dest = display.getDestinationPosition(board, Piece.color.WHITE);
 
-
-        for(Move move: getValidMoves(board, sourceRow, sourceCol)) {
-            display.displayMove(move);
-            System.out.print("\t");
-        }
-
-
-        System.out.println("Enter dest pos: ");
-        String destPos = scanner.nextLine();
-
-        int destRow = destPos.charAt(0) - 'a';
-        int destCol = destPos.charAt(1) - '1';
-
-        return new Move(sourceRow, sourceCol, destRow, destCol);
+        return new Move(source.getRow(), source.getCol(), dest.getRow(), dest.getCol());
     }
 
     private ArrayList<Move> getValidMoves(Board board, int r, int c) {
