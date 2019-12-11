@@ -3,6 +3,18 @@ import Pieces.Piece;
 import java.util.ArrayList;
 
 public class PieceMoves {
+    public static ArrayList<Move> getValidMoves(Board board, int r, int c) {
+        ArrayList<Move> potentialMoves = getPotentialMoves(board, r, c);
+        ArrayList<Move> validMoves = new ArrayList<>();
+        for(Move move: potentialMoves) {
+            if(board.isMoveValid(move)) {
+                validMoves.add(move);
+            }
+        }
+
+        return validMoves;
+    }
+
     static ArrayList<Move> getPotentialMoves(Board board, int r, int c) {
         Piece piece = board.getPiece(r, c);
 
