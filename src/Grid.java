@@ -43,7 +43,21 @@ public class Grid {
         squares[HEIGHT - 1][c] = new Square(new Rook(x)); c++;
     }
 
-    public Square getSquare(int r, int c) {
+    public void movePiece(int sourceRow, int sourceCol, int destRow, int destCol) {
+        //Any piece in the dest square is considered taken and removed
+        setSquare(destRow, destCol, getPiece(sourceRow, sourceCol));
+        setSquare(sourceRow, sourceCol, null);
+    }
+
+    private void setSquare(int r, int c, Piece piece) {
+        getSquare(r, c).setPiece(piece);
+    }
+
+    public Piece getPiece(int r, int c) {
+        return getSquare(r, c).getPiece();
+    }
+
+    private Square getSquare(int r, int c) {
         return squares[r][c];
     }
 
