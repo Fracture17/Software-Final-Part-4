@@ -4,20 +4,19 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CommandLineDisplay implements Display {
-    public void update(Board board) {
+    public void update(Board board, Piece.color currentPlayerColor) {
         for(int r = 0; r < board.getHeight(); r++) {
-            for(int c = 0; c < board.getWidth(); c++) {
-                Piece piece = board.getPiece(r, c);
+            ArrayList<Position> row = board.getRowPositions(r);
+            for (Position position : row) {
+                Piece piece = board.getPiece(position);
 
-                if(piece == null) {
+                if (piece == null) {
                     displayEmpty();
-                }
-                else {
+                } else {
                     displayPiece(piece);
                 }
 
                 System.out.print("\t");
-
             }
             System.out.println();
         }
@@ -89,48 +88,64 @@ public class CommandLineDisplay implements Display {
     }
 
     public void displayMove(Move move) {
-        char sourceRowChar = (char) (move.sourceRow + 'a');
-        char sourceColChar = (char) (move.sourceCol + '1');
+        String sourcePos = posToStr(move.sourcePos);
+        String destPos = posToStr(move.destPos);
 
-        char destRowChar = (char) (move.destRow + 'a');
-        char destColChar = (char) (move.destCol + '1');
-
-        System.out.print("" + sourceRowChar + sourceColChar + "->" + destRowChar + destColChar);
+        System.out.print(sourcePos + "->" + destPos);
     }
 
     @Override
-    public void askForPieceToMove(Board board, Piece.color playerColor) {
+    public void askForPieceToMove(Board board, Piece.color currentPlayerColor) {
         System.out.println("Enter source pos: ");
     }
 
     @Override
-    public Position getSourcePiecePosition(Board board, Piece.color playerColor) {
+    public Position getSourcePiecePosition(Board board, Piece.color currentPlayerColor) {
         Scanner scanner = new Scanner(System.in);
         String sourcePos = scanner.nextLine();
 
-        int sourceRow = sourcePos.charAt(0) - 'a';
-        int sourceCol = sourcePos.charAt(1) - '1';
-
-        return new Position(sourceRow, sourceCol);
+        return strToPos(sourcePos, board);
     }
 
     @Override
-    public void askWhereToMove(Board board, Piece.color playerColor, ArrayList<Move> validMoves) {
+    public void askWhereToMove(Board board, Piece.color currentPlayerColor, ArrayList<Move> validMoves) {
         for(Move move: validMoves) {
             displayMove(move);
+            System.out.print(", ");
         }
 
         System.out.println("Enter dest pos: ");
     }
 
     @Override
-    public Position getDestinationPosition(Board board, Piece.color playerColor) {
+    public Position getDestinationPosition(Board board, Piece.color currentPlayerColor) {
         Scanner scanner = new Scanner(System.in);
         String destPos = scanner.nextLine();
 
-        int destRow = destPos.charAt(0) - 'a';
-        int destCol = destPos.charAt(1) - '1';
+        return strToPos(destPos, board);
+    }
 
-        return new Position(destRow, destCol);
+    @Override
+    public void displayWinner(Piece.color winningColor) {
+        if(winningColor == Piece.color.WHITE) {
+            System.out.println("White wins!");
+        }
+        else {
+            System.out.println("Black wins!");
+        }
+    }
+
+    private Position strToPos(String pos, Board board) {
+        int r = '8' - pos.charAt(1);
+        int c = pos.charAt(0) - 'a';
+
+        return board.getPosition(r, c);
+    }
+
+    private String posToStr(Position pos) {
+        char r = (char) ('8' - pos.getRow());
+        char c = (char) (pos.getCol() + 'a');
+
+        return "" + c + r;
     }
 }

@@ -1,84 +1,77 @@
 import Pieces.*;
 
 public class Grid {
-    public Grid() {
-        Piece.color x = Piece.color.BLACK;
-        int c = 0;
-        squares[0][c] = new Square(new Rook(x)); c++;
-        squares[0][c] = new Square(new Knight(x)); c++;
-        squares[0][c] = new Square(new Bishop(x)); c++;
-        squares[0][c] = new Square(new Queen(x)); c++;
-        squares[0][c] = new Square(new King(x)); c++;
-        squares[0][c] = new Square(new Bishop(x)); c++;
-        squares[0][c] = new Square(new Knight(x)); c++;
-        squares[0][c] = new Square(new Rook(x)); c++;
+    public Grid(int height, int width) {
+        this.height = height;
+        this.width = width;
+        squares = new Square[height][width];
 
-
-        for(c = 0; c < WIDTH; c++) {
-            squares[1][c] = new Square(new Pawn(x));
-        }
-
-
-
-
-
-
-
-        for(int r = 2; r < HEIGHT - 1 - 1; r++) {
-            for(c = 0; c < WIDTH; c++) {
-                squares[r][c] = new Square();
+        for(int r = 0; r < height; r++) {
+            for(int c = 0; c < width; c++) {
+                squares[r][c] = new Square(new Piece());
             }
         }
 
-
-        for(c = 0; c < WIDTH; c++) {
-            squares[HEIGHT - 1 - 1][c] = new Square(new Pawn(Piece.color.WHITE));
+        positions = new Position[height][width];
+        for(int r = 0; r < height; r++) {
+            for(int c = 0; c < width; c++) {
+                positions[r][c] = new Position(r, c);
+            }
         }
-
-
-        x = Piece.color.WHITE;
-        c = 0;
-        squares[HEIGHT - 1][c] = new Square(new Rook(x)); c++;
-        squares[HEIGHT - 1][c] = new Square(new Knight(x)); c++;
-        squares[HEIGHT - 1][c] = new Square(new Bishop(x)); c++;
-        squares[HEIGHT - 1][c] = new Square(new Queen(x)); c++;
-        squares[HEIGHT - 1][c] = new Square(new King(x)); c++;
-        squares[HEIGHT - 1][c] = new Square(new Bishop(x)); c++;
-        squares[HEIGHT - 1][c] = new Square(new Knight(x)); c++;
-        squares[HEIGHT - 1][c] = new Square(new Rook(x)); c++;
     }
 
     public void movePiece(Move move) {
         //Any piece in the dest square is considered taken and removed
-        setSquare(move.destRow, move.destCol, getPiece(move.sourceRow, move.sourceCol));
-        setSquare(move.sourceRow, move.sourceCol, null);
+        setSquare(move.destPos, getPiece(move.sourcePos));
+        setSquare(move.sourcePos, new Piece());
     }
 
-    private void setSquare(int r, int c, Piece piece) {
-        getSquare(r, c).setPiece(piece);
+    public void setSquare(Position position, Piece piece) {
+        getSquare(position).setPiece(piece);
     }
 
-    public Piece getPiece(int r, int c) {
-        Square square = getSquare(r, c);
+    public Piece getPiece(Position position) {
+        Square square = getSquare(position);
         if(square == null) {
-            return null;
+            return new Piece();
         }
         return square.getPiece();
     }
 
-    public Square getSquare(int r, int c) {
-        if(r < 0 || r >= HEIGHT) {
+    public Square getSquare(Position position) {
+        if(!isInBounds(position)) {
             return null;
         }
-        if(c < 0 || c >= WIDTH) {
-            return null;
-        }
-        return squares[r][c];
+        return squares[position.getRow()][position.getCol()];
     }
 
+    public boolean isInBounds(Position position) {
+        if(position.getRow() < 0 || position.getRow() >= height) {
+            return false;
+        }
+        if(position.getCol() < 0 || position.getCol() >= width) {
+            return false;
+        }
+        return true;
+    }
 
-    public final int HEIGHT = 8;
-    public final int WIDTH = 8;
+    //Flyweight Pattern
+    //There is only one Position object per square, and they are all
+    //contained and referenced through the Grid object.
+    //There only needs to be a single object to represent out of bounds
+    public Position getPosition(int r, int c) {
+        try {
+            return positions[r][c];
+        }
+        catch (Exception e) {
+            return outOfBounds;
+        }
+    }
 
-    private Square[][] squares = new Square[HEIGHT][WIDTH];
+    private int height;
+    private int width;
+    private Square[][] squares;
+    private Position[][] positions;
+    private Position outOfBounds = new Position(-1, -1);
+
 }

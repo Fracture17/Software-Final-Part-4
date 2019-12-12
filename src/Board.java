@@ -1,16 +1,45 @@
 import Pieces.Piece;
 
+import java.util.ArrayList;
+
 public class Board {
-    public Piece getPiece(int r, int c) {
-        return grid.getPiece(r, c);
+    public Board() {
+        //Builder design pattern
+        //Setup of the chess pieces is left to the Board object, rather than the Grid implementation
+
+        setupPlayerPieces(1, 0, Piece.color.BLACK);
+
+        setupPlayerPieces(HEIGHT - 1 - 1, HEIGHT - 1, Piece.color.WHITE);
+    }
+
+    private void setupPlayerPieces(int pawnRow, int otherPiecesRow, Piece.color color) {
+        for(Position position: getRowPositions(pawnRow)) {
+            grid.setSquare(position, new Piece(color, Piece.type.PAWN));
+        }
+
+        ArrayList<Position> positions = getRowPositions(otherPiecesRow);
+
+        int c = 0;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.ROOK)); c++;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.KNIGHT)); c++;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.BISHOP)); c++;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.QUEEN)); c++;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.KING)); c++;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.BISHOP)); c++;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.KNIGHT)); c++;
+        grid.setSquare(positions.get(c), new Piece(color, Piece.type.ROOK)); c++;
+    }
+
+    public Piece getPiece(Position position) {
+        return grid.getPiece(position);
     }
 
     public int getHeight() {
-        return grid.HEIGHT;
+        return HEIGHT;
     }
 
     public int getWidth() {
-        return grid.WIDTH;
+        return WIDTH;
     }
 
     public void makeMove(Move move) {
@@ -18,8 +47,8 @@ public class Board {
     }
 
     public boolean isMoveValid(Move move) {
-        Square source = grid.getSquare(move.sourceRow, move.sourceCol);
-        Square dest = grid.getSquare(move.destRow, move.destCol);
+        Square source = grid.getSquare(move.sourcePos);
+        Square dest = grid.getSquare(move.destPos);
 
         if(source == null || dest == null) {
             return false;
@@ -29,18 +58,44 @@ public class Board {
             return false;
         }
 
-        if(!PieceMoves.getPotentialMoves(this, move.sourceRow, move.sourceCol).contains(move)) {
+        if(!PieceMoves.getPotentialMoves(this, move.sourcePos).contains(move)) {
             return false;
         }
 
         if(dest.getPiece() != null) {
-            if (source.getPiece().getColor() == dest.getPiece().getColor()) {
-                return false;
-            }
+            return source.getPiece().getColor() != dest.getPiece().getColor();
         }
 
         return true;
     }
 
-    private Grid grid = new Grid();
+    public ArrayList<Position> getAllPositions() {
+        ArrayList<Position> positions = new ArrayList<>();
+        for(int r = 0; r < getHeight(); r++) {
+            positions.addAll(getRowPositions(r));
+        }
+        return positions;
+    }
+
+    public ArrayList<Position> getRowPositions(int r) {
+        ArrayList<Position> positions = new ArrayList<>();
+        for(int c = 0; c < WIDTH; c++) {
+            positions.add(getPosition(r, c));
+        }
+        return positions;
+    }
+
+    public boolean isInBounds(Position position) {
+        return grid.isInBounds(position);
+    }
+
+
+    public Position getPosition(int r, int c) {
+        return grid.getPosition(r, c);
+    }
+
+    public final int HEIGHT = 8;
+    public final int WIDTH = 8;
+
+    private Grid grid = new Grid(HEIGHT, WIDTH);
 }

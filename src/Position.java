@@ -1,32 +1,29 @@
 public class Position {
     public Position(int r, int c) {
-        if(!setRow(r) || !setCol(c)) {
-            throw new RuntimeException("Position out of bounds");
-        }
+        setRow(r);
+        setCol(c);
     }
 
-    public boolean setRow(int r) {
-        if(r < 0 || r >= 8) {
-            return false;
-        }
+    private void setRow(int r) {
         this.r = r;
-        return true;
     }
 
     public int getRow() {
         return r;
     }
 
-    public boolean setCol(int c) {
-        if(c < 0 || c >= 8) {
-            return false;
-        }
+    private void setCol(int c) {
         this.c = c;
-        return true;
     }
 
     public int getCol() {
         return c;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Position other = (Position) obj;
+        return r == other.r && c == other.c;
     }
 
     private int r;

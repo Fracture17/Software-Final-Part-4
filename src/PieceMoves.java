@@ -3,8 +3,8 @@ import Pieces.Piece;
 import java.util.ArrayList;
 
 public class PieceMoves {
-    public static ArrayList<Move> getValidMoves(Board board, int r, int c) {
-        ArrayList<Move> potentialMoves = getPotentialMoves(board, r, c);
+    public static ArrayList<Move> getValidMoves(Board board, Position position) {
+        ArrayList<Move> potentialMoves = getPotentialMoves(board, position);
         ArrayList<Move> validMoves = new ArrayList<>();
         for(Move move: potentialMoves) {
             if(board.isMoveValid(move)) {
@@ -15,236 +15,151 @@ public class PieceMoves {
         return validMoves;
     }
 
-    static ArrayList<Move> getPotentialMoves(Board board, int r, int c) {
-        Piece piece = board.getPiece(r, c);
+    static ArrayList<Move> getPotentialMoves(Board board, Position position) {
+        Piece piece = board.getPiece(position);
 
         switch (piece.getType()) {
             case PAWN:
-                return getPawnMoves(board, r, c);
+                return getPawnMoves(board, position);
             case KING:
-                return getKingMoves(board, r, c);
+                return getKingMoves(board, position);
             case QUEEN:
-                return getQueenMoves(board, r, c);
+                return getQueenMoves(board, position);
             case BISHOP:
-                return getBishopMoves(board, r, c);
+                return getBishopMoves(board, position);
             case ROOK:
-                return getRookMoves(board, r, c);
+                return getRookMoves(board, position);
             case KNIGHT:
-                return getKnightMoves(board, r, c);
+                return getKnightMoves(board, position);
             default:
                 return new ArrayList<>();
         }
     }
 
-    private static ArrayList<Move> getPawnMoves(Board board, int r, int c) {
-        Piece.color pieceColor = board.getPiece(r, c).getColor();
+    private static ArrayList<Move> getPawnMoves(Board board, Position position) {
+        Piece.color pieceColor = board.getPiece(position).getColor();
 
         ArrayList<Move> moves = new ArrayList<>();
 
-        if(pieceColor == Piece.color.BLACK) {
-            if(board.getPiece(r + 1, c) == null) {
-                moves.add(new Move(r, c, r + 1, c));
-                if(r == 1) {
-                    if(board.getPiece(r + 2, c) == null) {
-                        moves.add(new Move(r, c, r + 2, c));
-                    }
-                }
-            }
+        int direction = pieceColor == Piece.color.BLACK ? 1 : -1;
 
-            if(board.getPiece(r + 1, c + 1) != null) {
-                if(board.getPiece(r + 1, c + 1).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, r + 1, c + 1));
-                }
-            }
+        int r = position.getRow();
+        int c = position.getCol();
 
-            if(board.getPiece(r + 1, c - 1) != null) {
-                if(board.getPiece(r + 1, c - 1).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, r + 1, c - 1));
+        int doubleRow = pieceColor == Piece.color.BLACK ? 1 : 6;
+
+        Position forward = board.getPosition(r + direction, c);
+        if(board.getPiece(forward).getType() == Piece.type.NONE) {
+            moves.add(new Move(position, forward));
+            if(r == doubleRow) {
+                Position doubleForward = board.getPosition(r + direction * 2, c);
+                if(board.getPiece(doubleForward).getType() == Piece.type.NONE) {
+                    moves.add(new Move(position, doubleForward));
                 }
             }
         }
 
-        if(pieceColor == Piece.color.WHITE) {
-            if(board.getPiece(r - 1, c) == null) {
-                moves.add(new Move(r, c, r - 1, c));
-                if(r == 7) {
-                    if(board.getPiece(r - 2, c) == null) {
-                        moves.add(new Move(r, c, r - 2, c));
-                    }
-                }
+        Position diagonalLeft = board.getPosition(r + direction, c - 1);
+        if(board.getPiece(diagonalLeft).getType() != Piece.type.NONE) {
+            if(board.getPiece(diagonalLeft).getColor() != pieceColor) {
+                moves.add(new Move(position, diagonalLeft));
             }
+        }
 
-            if(board.getPiece(r - 1, c + 1) != null) {
-                if(board.getPiece(r - 1, c + 1).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, r - 1, c + 1));
-                }
-            }
-
-            if(board.getPiece(r - 1, c - 1) != null) {
-                if(board.getPiece(r - 1, c - 1).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, r - 1, c - 1));
-                }
+        Position diagonalRight = board.getPosition(r + direction, c + 1);
+        if(board.getPiece(diagonalRight).getType() != Piece.type.NONE) {
+            if(board.getPiece(diagonalRight).getColor() != pieceColor) {
+                moves.add(new Move(position, diagonalRight));
             }
         }
 
         return moves;
     }
 
-    private static ArrayList<Move> getKingMoves(Board board, int r, int c) {
-        //TODO: check for "check"
+    private static ArrayList<Move> getKingMoves(Board board, Position position) {
+        int r = position.getRow();
+        int c = position.getCol();
+
         ArrayList<Move> moves = new ArrayList<>();
         for(int y = -1; y <= 1; y++) {
             for(int x = -1; x <= 1; x++) {
                 if(y != 0 || x != 0) {
-                    moves.add(new Move(r, c, r + y, c + x));
+                    moves.add(new Move(position, board.getPosition(r + y, c + x)));
                 }
             }
         }
         return moves;
     }
 
-    private static ArrayList<Move> getQueenMoves(Board board, int r, int c) {
-        ArrayList<Move> moves = getBishopMoves(board, r, c);
-        moves.addAll(getRookMoves(board, r, c));
+    private static ArrayList<Move> getQueenMoves(Board board, Position position) {
+        ArrayList<Move> moves = getBishopMoves(board, position);
+        moves.addAll(getRookMoves(board, position));
 
         return moves;
     }
 
-    private static ArrayList<Move> getBishopMoves(Board board, int r, int c) {
-        Piece.color pieceColor = board.getPiece(r, c).getColor();
+    private static ArrayList<Move> getBishopMoves(Board board, Position position) {
+        ArrayList<Move> moves = new ArrayList<>();
+
+        moves.addAll(getMovesInLine(board, position, 1, 1));
+        moves.addAll(getMovesInLine(board, position, -1, 1));
+        moves.addAll(getMovesInLine(board, position, 1, -1));
+        moves.addAll(getMovesInLine(board, position, -1, -1));
+
+        return moves;
+    }
+
+    private static ArrayList<Move> getMovesInLine(Board board, Position start, int directionR, int directionC) {
+        Piece.color pieceColor = board.getPiece(start).getColor();
 
         ArrayList<Move> moves = new ArrayList<>();
 
-        int y = 1;
-        int x = 1;
-        for(int newR = r + y, newC = c + x; isInBounds(board, newR, newC); newR += y, newC += x) {
-            if(board.getPiece(newR, newC) == null) {
-                moves.add(new Move(r, c, newR, newC));
-            }
-            else {
-                if(board.getPiece(newR, newC).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, newR, newC));
-                }
-                break;
-            }
-        }
+        int r = start.getRow();
+        int c = start.getCol();
 
-        y = -1;
-        x = 1;
-        for(int newR = r + y, newC = c + x; isInBounds(board, newR, newC); newR += y, newC += x) {
-            if(board.getPiece(newR, newC) == null) {
-                moves.add(new Move(r, c, newR, newC));
-            }
-            else {
-                if(board.getPiece(newR, newC).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, newR, newC));
-                }
-                break;
-            }
-        }
+        Position position = board.getPosition(r + directionR, c + directionC);
 
-        y = 1;
-        x = -1;
-        for(int newR = r + y, newC = c + x; isInBounds(board, newR, newC); newR += y, newC += x) {
-            if(board.getPiece(newR, newC) == null) {
-                moves.add(new Move(r, c, newR, newC));
+        while (board.isInBounds(position)) {
+            if(board.getPiece(position).getType() == Piece.type.NONE) {
+                moves.add(new Move(start, position));
             }
             else {
-                if(board.getPiece(newR, newC).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, newR, newC));
+                if(board.getPiece(position).getColor() != pieceColor) {
+                    moves.add(new Move(start, position));
                 }
                 break;
             }
-        }
-
-        y = -1;
-        x = -1;
-        for(int newR = r + y, newC = c + x; isInBounds(board, newR, newC); newR += y, newC += x) {
-            if(board.getPiece(newR, newC) == null) {
-                moves.add(new Move(r, c, newR, newC));
-            }
-            else {
-                if(board.getPiece(newR, newC).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, newR, newC));
-                }
-                break;
-            }
+            position = board.getPosition(position.getRow() + directionR, position.getCol() + directionC);
         }
 
         return moves;
     }
 
-    private static boolean isInBounds(Board board, int r, int c) {
-        return r >= 0 && r < board.getHeight() && c >= 0 && c < board.getWidth();
-    }
-
-    private static ArrayList<Move> getRookMoves(Board board, int r, int c) {
-        Piece.color pieceColor = board.getPiece(r, c).getColor();
-
+    private static ArrayList<Move> getRookMoves(Board board, Position position) {
         ArrayList<Move> moves = new ArrayList<>();
 
-        for(int y = r + 1; y < board.getHeight(); y++) {
-            if(board.getPiece(y, c) == null) {
-                moves.add(new Move(r, c, y, c));
-            }
-            else {
-                if(board.getPiece(y, c).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, y, c));
-                }
-                break;
-            }
-        }
-
-        for(int y = r - 1; y >= 0; y--) {
-            if(board.getPiece(y, c) == null) {
-                moves.add(new Move(r, c, y, c));
-            }
-            else {
-                if(board.getPiece(y, c).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, y, c));
-                }
-                break;
-            }
-        }
-
-        for(int x = c + 1; x < board.getWidth(); x++) {
-            if(board.getPiece(r, x) == null) {
-                moves.add(new Move(r, c, r, x));
-            }
-            else {
-                if(board.getPiece(r, x).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, r, x));
-                }
-                break;
-            }
-        }
-
-        for(int x = c - 1; x >= 0; x--) {
-            if(board.getPiece(r, x) == null) {
-                moves.add(new Move(r, c, r, x));
-            }
-            else {
-                if(board.getPiece(r, x).getColor() != pieceColor) {
-                    moves.add(new Move(r, c, r, x));
-                }
-                break;
-            }
-        }
+        moves.addAll(getMovesInLine(board, position, 1, 0));
+        moves.addAll(getMovesInLine(board, position, -1, 0));
+        moves.addAll(getMovesInLine(board, position, 0, 1));
+        moves.addAll(getMovesInLine(board, position, 0, -1));
 
         return moves;
     }
 
-    private static ArrayList<Move> getKnightMoves(Board board, int r, int c) {
+    private static ArrayList<Move> getKnightMoves(Board board, Position position) {
         ArrayList<Move> moves = new ArrayList<>();
 
-        moves.add(new Move(r, c, r + 1, c + 2));
-        moves.add(new Move(r, c, r + 1, c - 2));
-        moves.add(new Move(r, c, r + 2, c + 1));
-        moves.add(new Move(r, c, r + 2, c - 1));
-        moves.add(new Move(r, c, r - 1, c + 2));
-        moves.add(new Move(r, c, r - 1, c - 2));
-        moves.add(new Move(r, c, r - 2, c + 1));
-        moves.add(new Move(r, c, r - 2, c - 1));
+        int r = position.getRow();
+        int c = position.getCol();
+
+        moves.add(new Move(position, board.getPosition(r + 1, c + 2)));
+        moves.add(new Move(position, board.getPosition(r + 1, c - 2)));
+        moves.add(new Move(position, board.getPosition(r + 2, c + 1)));
+        moves.add(new Move(position, board.getPosition(r + 2, c - 1)));
+        moves.add(new Move(position, board.getPosition(r - 1, c + 2)));
+        moves.add(new Move(position, board.getPosition(r - 1, c - 2)));
+        moves.add(new Move(position, board.getPosition(r - 2, c + 1)));
+        moves.add(new Move(position, board.getPosition(r - 2, c - 1)));
 
         return moves;
     }

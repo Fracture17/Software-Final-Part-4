@@ -10,35 +10,25 @@ public class HumanPlayer implements Player {
 
     @Override
     public Move getNextMove(Board board, Display display) {
-        display.askForPieceToMove(board, Piece.color.WHITE);
-        Position source = display.getSourcePiecePosition(board, Piece.color.WHITE);
+        ArrayList<Move> validMoves = new ArrayList<>();
+        Position source = board.getPosition(-1, -1);
+        while (validMoves.size() == 0) {
+            display.askForPieceToMove(board, getColor());
+            source = display.getSourcePiecePosition(board, getColor());
 
-        ArrayList<Move> validMoves = PieceMoves.getValidMoves(board, source.getRow(), source.getCol());
+            validMoves = PieceMoves.getValidMoves(board, source);
+        }
 
-        display.askWhereToMove(board, Piece.color.WHITE, validMoves);
-        Position dest = display.getDestinationPosition(board, Piece.color.WHITE);
+        display.askWhereToMove(board, getColor(), validMoves);
+        Position dest = display.getDestinationPosition(board, getColor());
 
-        return new Move(source.getRow(), source.getCol(), dest.getRow(), dest.getCol());
+        return new Move(source, dest);
     }
 
     @Override
     public Piece.color getColor() {
         return color;
     }
-
-    private ArrayList<Move> getValidMoves(Board board, int r, int c) {
-        ArrayList<Move> potentialMoves = PieceMoves.getPotentialMoves(board, r, c);
-        ArrayList<Move> validMoves = new ArrayList<>();
-        for(Move move: potentialMoves) {
-            if(board.isMoveValid(move)) {
-                validMoves.add(move);
-            }
-        }
-
-        return validMoves;
-    }
-
-
 
     private Piece.color color;
 }

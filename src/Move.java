@@ -1,19 +1,15 @@
 public class Move {
-    public Move(int sourceRow, int sourceCol, int destRow, int destCol) {
-        this.sourceRow = sourceRow;
-        this.sourceCol = sourceCol;
-        this.destRow = destRow;
-        this.destCol = destCol;
+    public Move(Position sourcePos, Position destPos) {
+        this.sourcePos = sourcePos;
+        this.destPos = destPos;
     }
 
     @Override
     public boolean equals(Object obj) {
         Move other = (Move) obj;
-        return sourceRow == other.sourceRow && sourceCol == other.sourceCol && destRow == other.destRow && destCol == other.destCol;
+        return sourcePos.equals(other.sourcePos) && destPos.equals(other.destPos);
     }
 
-    public int sourceRow;
-    public int sourceCol;
-    public int destRow;
-    public int destCol;
+    public Position sourcePos;
+    public Position destPos;
 }
